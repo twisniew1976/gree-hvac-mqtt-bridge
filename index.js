@@ -59,6 +59,7 @@ const publishIfChanged = function (stateProp, newValue, mqttTopic) {
 
 const deviceOptions = {
   host: argv['hvac-host'],
+  localPort: argv['local-port'],
   onStatus: (deviceModel) => {
     publishIfChanged('temperature', deviceModel.props[commands.temperature.code].toString(), '/temperature/get')
     publishIfChanged('fanSpeed', getKeyByValue(commands.fanSpeed.value, deviceModel.props[commands.fanSpeed.code]).toString(), '/fanspeed/get')
