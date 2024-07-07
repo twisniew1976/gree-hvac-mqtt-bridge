@@ -21,6 +21,7 @@ class Device {
     //  Set defaults
     this.options = {
       host: options.host || '192.168.1.255',
+      localPort: options.localPort || 0,
       onStatus: options.onStatus || function () {},
       onUpdate: options.onUpdate || function () {},
       onConnected: options.onConnected || function () {}
@@ -55,7 +56,7 @@ class Device {
      */
   _connectToDevice (address) {
     try {
-      socket.bind(() => {
+      socket.bind(this.options.localPort, () => {
         const message = Buffer.from(JSON.stringify({ t: 'scan' }))
 
         this.packetSentNo++;
@@ -64,7 +65,12 @@ class Device {
         socket.setBroadcast(true)        
         socket.send(message, 0, message.length, 7000, address)
 
-        console.log('[UDP] Connected to device at %s', address)
+        if (this.options.localPort === 0) {
+          console.log('[UDP] Connected to device at %s', address)            
+        } else {
+          console.log('[UDP] Connected to device at %s from port %d', address, this.options.localPort)
+        }
+        
       })
     } catch (err) {
       const timeout = 60
